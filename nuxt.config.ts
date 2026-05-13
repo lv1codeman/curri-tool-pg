@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: process.env.NODE_ENV === "production" ? "/curri-tool/" : "/",
+    baseURL: process.env.NODE_ENV === "production" ? "/curri-tool-pg/" : "/",
     buildAssetsDir: "/static/",
   },
   compatibilityDate: "2024-11-01",
