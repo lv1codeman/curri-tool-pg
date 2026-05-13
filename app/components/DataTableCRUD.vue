@@ -198,6 +198,8 @@ const fetchData = async () => {
       props.apiUrl + props.apiEndpoints.get
     );
     items.value = response.data;
+    console.log("check here");
+    console.log(items.value);
   } catch (error) {
     console.error(error);
     errorMessage.value = "無法從 API 取得資料。";
@@ -257,7 +259,7 @@ const saveItem = async () => {
       );
     } else {
       // 修改、更新
-      const endpoint = props.apiEndpoints.update.replace("{id}", itemToSave.ID);
+      const endpoint = props.apiEndpoints.update.replace("{id}", itemToSave.id);
       await $curridataAPI.put(props.apiUrl + endpoint, itemToSave);
     }
     closeDialog();
@@ -281,15 +283,15 @@ const deleteItem = (item) => {
 
 const confirmDelete = async () => {
   const item = itemToDelete.value;
-  if (!item || !item.ID) {
-    errorMessage.value = `刪除失敗：無效的${props.itemSingular} ID。`;
-    console.error("嘗試刪除一個沒有 ID 的項目。");
+  if (!item || !item.id) {
+    errorMessage.value = `刪除失敗：無效的${props.itemSingular} id。`;
+    console.error("嘗試刪除一個沒有 id 的項目。");
     confirmDialog.value = false;
     return;
   }
 
   try {
-    const endpoint = props.apiEndpoints.delete.replace("{id}", item.ID);
+    const endpoint = props.apiEndpoints.delete.replace("{id}", item.id);
     await $curridataAPI.delete(props.apiUrl + endpoint);
     await fetchData();
     confirmDialog.value = false;

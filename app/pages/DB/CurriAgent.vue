@@ -20,23 +20,22 @@ import { ref } from "vue";
 definePageMeta({
   layout: "layout1",
 });
-
-// 這裡定義 CagentMaintenance 組件特有的配置
+// 這裡定義 cagentmaintenance 組件特有的配置
 const headers = [
   {
-    value: "ID",
-    title: "ID",
+    value: "id",
+    title: "id",
     sortable: false,
     width: "0px",
     class: "d-none",
     cellClass: "d-none",
   },
-  { value: "NAME", title: "姓名" },
-  { value: "EXT", title: "分機" },
-  { value: "EMAIL", title: "Email" },
+  { value: "name", title: "姓名" },
+  { value: "ext", title: "分機" },
+  { value: "email", title: "email" },
   { value: "actions", title: "操作", sortable: false },
 ];
-// CRUD的SERVER端API
+// crud的server端api
 const cagentApiEndpoints = {
   get: "/get_cagents",
   add: "/create_cagent",
@@ -44,12 +43,12 @@ const cagentApiEndpoints = {
   delete: "/delete_cagent/{id}",
 };
 
-const requiredRule = (value) => !!value || "此欄位為必填。";
+const requiredrule = (value) => !!value || "此欄位為必填。";
 
 // 定義表單欄位
 const cagentFormFields = [
-  { key: "NAME", label: "姓名", type: "text", rules: [requiredRule] },
-  { key: "EXT", label: "分機", type: "text", rules: [requiredRule] },
-  { key: "EMAIL", label: "Email", type: "text", rules: [requiredRule] },
+  { key: "name", label: "姓名", type: "text", rules: [requiredrule] },
+  { key: "ext", label: "分機", type: "text", rules: [requiredrule] },
+  { key: "email", label: "email", type: "text", rules: [requiredrule] },
 ];
 </script>

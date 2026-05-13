@@ -52,7 +52,7 @@
           </v-card-title>
           <v-card-text>
             <v-alert
-              :type="serverStatus"
+              :type="alertTypeMap[serverStatus]"
               density="compact"
               variant="tonal"
               :title="
@@ -194,7 +194,16 @@ const user = ref<{
 } | null>(null);
 
 // 🎯 新增伺服器狀態的響應式變數
-const serverStatus = ref<"success" | "error" | "loading">("loading");
+
+const alertTypeMap: Record<ServerStatus, "info" | "success" | "error"> = {
+  loading: "info",
+  success: "success",
+  error: "error",
+};
+
+type ServerStatus = "loading" | "success" | "error";
+
+const serverStatus = ref<ServerStatus>("loading");
 const serverMessage = ref("正在檢查伺服器連線狀態...");
 
 // -----------------------------------------------------------------

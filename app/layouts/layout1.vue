@@ -377,8 +377,9 @@ function logout() {
   // 🎯 關鍵修改：從 localStorage 移除使用者資訊
   if (typeof localStorage !== "undefined") {
     localStorage.removeItem("curridata_user");
+    localStorage.removeItem("curridata_token");
   }
-
+  navigateTo("/login");
   alert("您已登出。");
 
   // 登出後導向首頁
