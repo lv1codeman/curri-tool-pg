@@ -106,21 +106,28 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useNuxtApp } from "#app";
-import { sampleContent } from "@/utils/class_sample.js"; // 根據你的路徑調整
-//套用layout
+import { sampleContent } from "@/utils/class_sample.js";
+
 definePageMeta({
   layout: "layout1",
 });
 
-// --- 狀態變數 ---
+// ✅ ✅ ✅ 🔥 核心：字串清理函式（最重要）
+const normalize = (str) =>
+  str
+    .replace(/\r/g, "") // 移除 CR
+    .replace(/\uFEFF/g, "") // 移除 BOM
+    .trim();
+
+// 狀態
 const classMap = ref(new Map());
 const inputText = ref("");
 const outputText = ref("");
-const inputRef = ref(null);
-const outputRef = ref(null);
 const convert_type = ref("系所簡稱");
+const snackbar = ref(false);
+
 const convert_types = [
   "系所簡稱",
   "系所全名",
@@ -133,156 +140,88 @@ const convert_types = [
   "課務承辦人分機",
   "課務承辦人Email",
 ];
-const snackbar = ref(false);
-
-let resizeObserverInput = null;
-let resizeObserverOutput = null;
 
 const { $curridataAPI } = useNuxtApp();
 
-// --- 處理貼上事件的函式 ---
+// ✅ 貼上（這裡也補強）
 const handlePaste = (event) => {
   event.preventDefault();
   const pasteData = event.clipboardData.getData("text");
-  inputText.value = pasteData.trim();
+
+  inputText.value = pasteData
+    .replace(/\r/g, "")
+    .replace(/\uFEFF/g, "")
+    .trim();
 };
 
-// --- 清空函式 ---
-const clearTextareas = () => {
-  inputText.value = "";
-  outputText.value = "";
-};
-
-// --- 複製到剪貼簿函式 (通用) ---
+// ✅ 複製
 const copyToClipboard = async () => {
   try {
-    if (!navigator.clipboard) {
-      alert("你的瀏覽器不支援剪貼簿功能，請手動複製。");
-      return;
-    }
     await navigator.clipboard.writeText(outputText.value);
     snackbar.value = true;
-  } catch (err) {
-    console.error("複製失敗:", err);
-    alert("複製失敗，請手動複製。");
+  } catch {
+    alert("複製失敗");
   }
 };
 
 const copySampleToClipboard = async () => {
   try {
-    if (!navigator.clipboard) {
-      alert("你的瀏覽器不支援剪貼簿功能，請手動複製。");
-      return;
-    }
     await navigator.clipboard.writeText(sampleContent);
     snackbar.value = true;
-  } catch (err) {
-    console.error("複製失敗:", err);
-    alert("複製失敗，請手動複製。");
+  } catch {
+    alert("複製失敗");
   }
 };
 
-// --- [修改功能] 複製不重複的 Email 函式，可處理兩種 Email 類型 ---
+const clearTextareas = () => {
+  inputText.value = "";
+  outputText.value = "";
+};
+
+// ✅ Email 去重（也用 normalize）
 const copyUniqueEmails = async () => {
   const isAgentEmail = convert_type.value === "系辦助理Email";
   const isCourseAgentEmail = convert_type.value === "課務承辦人Email";
 
-  if (
-    !inputText.value ||
-    (!isAgentEmail && !isCourseAgentEmail) ||
-    !classMap.value.size
-  ) {
-    return;
-  }
-
-  // 決定要提取哪個欄位
   const emailKey = isAgentEmail ? "AGENT_EMAIL" : "CAGENT_EMAIL";
 
-  const lines = inputText.value.split("\n");
-  const emails = [];
+  const emails = inputText.value
+    .split("\n")
+    .map((line) => {
+      const key = normalize(line);
+      const data = classMap.value.get(key);
+      return data?.[emailKey];
+    })
+    .filter(Boolean);
 
-  // 1. 取得所有對應的 Email
-  lines.forEach((line) => {
-    const trimmedLine = line.trim();
-    const deptData = classMap.value.get(trimmedLine);
-
-    if (deptData && deptData[emailKey] && deptData[emailKey] !== "查無資料") {
-      emails.push(deptData[emailKey]);
-    }
-  });
-
-  // 2. 排除重複的 Email
   const uniqueEmails = [...new Set(emails)];
-  const resultText = uniqueEmails.join("\n");
 
-  // 3. 複製到剪貼簿
-  try {
-    if (!navigator.clipboard) {
-      alert("你的瀏覽器不支援剪貼簿功能，請手動複製。");
-      return;
-    }
-    await navigator.clipboard.writeText(resultText);
-    snackbar.value = true; // 顯示成功提示
-  } catch (err) {
-    console.error("複製失敗:", err);
-    alert("複製失敗，請手動複製。");
-  }
+  await navigator.clipboard.writeText(uniqueEmails.join("\n"));
+  snackbar.value = true;
 };
 
-// --- 頁面載入時獲取資料 (保持不變) ---
+// ✅ 讀 API
 onMounted(async () => {
   try {
-    // 呼叫新的 API，只獲取一次所有資料
-    const { data } = await $curridataAPI.get("/get_all_data");
+    const res = await $curridataAPI.get("/get_all_data");
+    const data = res.data;
 
-    // 直接將 API 返回的資料轉換為 Map
+    console.log("筆數:", data?.length);
+
     data.forEach((item) => {
-      classMap.value.set(item.CLASS, item);
+      if (item.CLASS) {
+        const key = normalize(item.CLASS); // ✅ 同步清理
+        classMap.value.set(key, item);
+      }
     });
 
-    console.log("資料已成功載入");
+    console.log("Map size:", classMap.value.size);
   } catch (error) {
-    console.error("載入資料失敗:", error);
-  }
-
-  // textarea卷軸同步、拖曳同步效果 (保持不變)
-  const inputTextArea = inputRef.value?.$el.querySelector("textarea");
-  const outputTextArea = outputRef.value?.$el.querySelector("textarea");
-
-  if (inputTextArea && outputTextArea) {
-    const syncScroll = (event) => {
-      if (event.target === inputTextArea) {
-        outputTextArea.scrollTop = inputTextArea.scrollTop;
-      } else if (event.target === outputTextArea) {
-        inputTextArea.scrollTop = outputTextArea.scrollTop;
-      }
-    };
-    inputTextArea.addEventListener("scroll", syncScroll);
-    outputTextArea.addEventListener("scroll", syncScroll);
-
-    const syncInputToOutput = () => {
-      outputTextArea.style.height = `${inputTextArea.offsetHeight}px`;
-      outputTextArea.style.width = `${inputTextArea.offsetWidth}px`;
-    };
-    const syncOutputToInput = () => {
-      inputTextArea.style.height = `${outputTextArea.offsetHeight}px`;
-      inputTextArea.style.width = `${outputTextArea.offsetWidth}px`;
-    };
-
-    resizeObserverInput = new ResizeObserver(syncInputToOutput);
-    resizeObserverOutput = new ResizeObserver(syncOutputToInput);
-
-    resizeObserverInput.observe(inputTextArea);
-    resizeObserverOutput.observe(outputTextArea);
+    console.error("載入失敗:", error);
   }
 });
 
-onBeforeUnmount(() => {
-  if (resizeObserverInput) resizeObserverInput.disconnect();
-  if (resizeObserverOutput) resizeObserverOutput.disconnect();
-});
-
-// --- 使用物件來管理轉換邏輯 (保持不變) ---
+// ✅ 對應
 const conversionFunctions = {
   系所全名: (data) => data.DEPT,
   系所簡稱: (data) => data.DEPT_S,
@@ -296,39 +235,32 @@ const conversionFunctions = {
   課務承辦人Email: (data) => data.CAGENT_EMAIL,
 };
 
+// ✅ ✅ ✅ 🔥 核心轉換（修正點！）
 const convertedText = computed(() => {
-  if (!inputText.value || !classMap.value.size) {
-    return "";
-  }
-  const lines = inputText.value.split("\n");
-  const convertFunc = conversionFunctions[convert_type.value];
+  if (!inputText.value || !classMap.value.size) return "";
 
-  if (!convertFunc) return "無效選項";
+  const fn = conversionFunctions[convert_type.value];
 
-  const results = lines.map((line) => {
-    const trimmedLine = line.trim();
-    const deptData = classMap.value.get(trimmedLine);
+  return inputText.value
+    .split("\n")
+    .map((line) => {
+      const key = normalize(line);
+      const data = classMap.value.get(key);
 
-    if (!deptData) return "查無資料";
-    const result = convertFunc(deptData);
-    return result || "查無資料"; // 確保空值也回傳查無資料
-  });
-  return results.join("\n");
+      return data ? fn(data) || "查無資料" : "查無資料";
+    })
+    .join("\n");
 });
 
-watch(convertedText, (newValue) => {
-  outputText.value = newValue;
+// ✅ 同步輸出
+watch(convertedText, (val) => {
+  outputText.value = val;
 });
 
-//計算功能選擇下拉選單的寬度
+// ✅ select 寬度
 const selectWidth = computed(() => {
-  const longestString = convert_types.reduce(
-    (a, b) => (a.length > b.length ? a : b),
-    ""
-  );
-  const characterWidth = 10;
-  const padding = 80;
-  return longestString.length * characterWidth + padding;
+  const max = convert_types.reduce((a, b) => (a.length > b.length ? a : b));
+  return max.length * 10 + 80;
 });
 </script>
 

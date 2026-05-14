@@ -94,7 +94,7 @@
         class="card-item cursor-pointer"
         title="學生入口"
         subtitle="每學期選課時程"
-        :href="'https://webap2.ncue.edu.tw/curri/stuEntry.html'"
+        :href="'https://webap2s.ncue.edu.tw/curri/stuEntry.html'"
         target="_blank"
       >
         <template v-slot:append>

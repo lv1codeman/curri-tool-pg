@@ -111,7 +111,7 @@
             prepend-icon="mdi-file-swap"
           ></v-list-item>
         </v-list-group>
-        <v-list-group value="tools">
+        <v-list-group value="tools" v-if="isAdmin">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
