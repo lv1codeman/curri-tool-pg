@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  ssr: true,
+  ssr: false,
+
   // when enabling ssr option you need to disable inlineStyles and maybe devLogs
   features: {
     inlineStyles: false,
