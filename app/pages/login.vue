@@ -6,8 +6,12 @@
     <v-card class="login-card rounded-lg pa-2" width="420" elevation="6">
       <!-- 標題 -->
       <v-card-title class="text-h5 primary lighten-2">
-        使用者登入
+        請輸入帳密登入
       </v-card-title>
+      <v-card-subtitle> 本系統使用supabase雲端資料庫， </v-card-subtitle>
+      <v-card-subtitle>
+        此資料庫久未使用會睡眠，登入約需等候20-30秒
+      </v-card-subtitle>
 
       <!-- 內容 -->
       <v-card-text class="pt-4">
