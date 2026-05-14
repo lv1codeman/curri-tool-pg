@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - main
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
-  pages: write # ✅ 必須
-  id-token: write # ✅ 必須
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -18,20 +20,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ✅ Node modules cache
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      # ✅ 🔥 Nuxt build cache
+      - name: Cache Nuxt build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .nuxt
+            .output
+          key: ${{ runner.os }}-nuxt-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**/*.vue', '**/*.ts') }}
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # ✅ 必須 Node 20+
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Generate static site
         run: npm run generate
         env:
           NUXT_SSR: false
 
-      # ✅ 官方步驟：上傳 artifact
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -42,6 +61,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ 官方 deploy（關鍵🔥）
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
