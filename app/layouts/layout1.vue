@@ -1,30 +1,28 @@
 <template>
   <v-app>
+    <!-- ✅ 上方工具列 -->
     <v-app-bar app>
+      <!-- ✅ 手機 menu 按鈕 -->
+      <v-app-bar-nav-icon v-if="mobile" @click="drawer = !drawer" />
+
       <NuxtLink to="/">
         <v-app-bar-title class="pl-4">課務輔助工具</v-app-bar-title>
       </NuxtLink>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
+      <!-- ✅ 使用者區 -->
       <div class="d-flex align-center pr-4">
         <template v-if="isLoggedIn">
-          <div v-if="user">
-            <span class="mr-3 text-subtitle-1 font-weight-bold">
-              歡迎，{{ user.name }} ({{ user.username }})
-            </span>
-          </div>
-
-          <div v-else>
-            <span>請先登入</span>
-          </div>
+          <span class="mr-3 text-subtitle-1 font-weight-bold">
+            歡迎，{{ user?.name }} ({{ user?.username }})
+          </span>
 
           <v-btn
             prepend-icon="mdi-logout"
             color="error"
             variant="flat"
             @click="logout"
-            size="large"
           >
             登出
           </v-btn>
@@ -34,9 +32,7 @@
           <v-btn
             prepend-icon="mdi-login"
             color="primary"
-            variant="flat"
             @click="dialog = true"
-            size="large"
           >
             登入系統
           </v-btn>
@@ -44,346 +40,239 @@
       </div>
     </v-app-bar>
 
-    <v-navigation-drawer expand-on-hover permanent rail app v-if="isLoggedIn">
-      <v-list nav>
-        <v-list-item
-          title="公告消息"
-          link
-          to="/welcome"
-          prepend-icon="mdi-home-outline"
-        ></v-list-item>
-        <v-list-item
-          title="資訊速查"
-          link
-          to="/Info/Info"
-          prepend-icon="mdi-information"
-        ></v-list-item>
-        <v-list-group value="database_maintenance">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="mdi-database-cog"
-              title="資料庫維護"
-            ></v-list-item>
-          </template>
+    <!-- ✅ Sidebar -->
+    <div v-show="isLoggedIn">
+      <v-navigation-drawer
+        v-model="drawer"
+        app
+        :permanent="!mobile"
+        :rail="!mobile"
+        :expand-on-hover="!mobile"
+        :temporary="mobile"
+        color="grey-lighten-4"
+      >
+        <v-list nav density="comfortable">
+          <!-- ✅ 主頁 -->
           <v-list-item
-            title="系所表維護"
+            to="/welcome"
             link
-            to="/DB/DBmaintain"
-            prepend-icon="mdi-table-edit"
-          ></v-list-item>
-          <v-tooltip text="班級-系所簡稱對照表維護" location="end">
-            <template v-slot:activator="{ props }">
+            prepend-icon="mdi-home"
+            title="首頁"
+            @click="handleNavClick"
+          />
+
+          <!-- ✅ 資訊 -->
+          <v-list-item
+            to="/Info/Info"
+            link
+            prepend-icon="mdi-information-outline"
+            title="資訊速查"
+            @click="handleNavClick"
+          />
+
+          <!-- ✅ 資料庫維護 -->
+          <v-list-group value="db">
+            <template #activator="{ props }">
               <v-list-item
                 v-bind="props"
-                title="班級-系所簡稱對照表維護"
-                link
-                to="/DB/ClassDeptshort"
-                prepend-icon="mdi-compare-horizontal"
-              ></v-list-item>
+                prepend-icon="mdi-database-cog"
+                title="資料庫維護"
+                color="blue-grey"
+              />
             </template>
-          </v-tooltip>
-          <v-list-item
-            title="課務承辦維護"
-            link
-            to="/DB/CurriAgent"
-            prepend-icon="mdi-account-edit"
-          ></v-list-item>
-        </v-list-group>
-        <v-list-group value="curriculum_tools">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="mdi-toolbox"
-              title="課務工具"
-            ></v-list-item>
-          </template>
-          <v-list-item
-            title="班級簡稱轉換"
-            link
-            to="/Converters/ClassToOthers"
-            prepend-icon="mdi-file-swap"
-          ></v-list-item>
-          <v-list-item
-            title="學制轉換"
-            link
-            to="/Converters/SIDtoSYS"
-            prepend-icon="mdi-file-swap"
-          ></v-list-item>
-        </v-list-group>
-        <v-list-group value="tools" v-if="isAdmin">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="mdi-tools"
-              title="其他工具"
-            ></v-list-item>
-          </template>
-          <v-list-item
-            title="梗圖搜尋"
-            link
-            to="/Tools/Meme"
-            prepend-icon="mdi-image"
-          ></v-list-item>
-          <v-list-item
-            title="Youtube影片下載"
-            link
-            to="/Tools/YTconverter"
-            prepend-icon="mdi-download-box"
-          ></v-list-item>
-        </v-list-group>
-        <v-list-group value="sixer" v-if="isAdmin">
-          <template v-slot:activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              prepend-icon="mdi-star-circle-outline"
-              title="Sixer"
-            ></v-list-item>
-          </template>
 
-          <v-list-item
-            title="Minecraft"
-            link
-            to="/Sixer/Minecraft"
-            prepend-icon="mdi-download-box"
-          ></v-list-item>
-          <v-list-item
-            title="存檔更新"
-            link
-            to="/Sixer/Upload"
-            prepend-icon="mdi-download-box"
-          ></v-list-item>
-        </v-list-group>
-      </v-list>
-    </v-navigation-drawer>
+            <v-list-item
+              to="/DB/DBmaintain"
+              link
+              title="系所表維護"
+              prepend-icon="mdi-table"
+              @click="handleNavClick"
+            />
 
-    <v-main
-      class="d-flex justify-center mt-2"
-      :class="{ 'ml-0': !isLoggedIn }"
-      v-if="isLoggedIn"
-    >
+            <v-list-item
+              to="/DB/ClassDeptshort"
+              link
+              title="班級對應"
+              prepend-icon="mdi-compare-horizontal"
+              @click="handleNavClick"
+            />
+
+            <v-list-item
+              to="/DB/CurriAgent"
+              link
+              title="課務承辦"
+              prepend-icon="mdi-account-tie"
+              @click="handleNavClick"
+            />
+          </v-list-group>
+
+          <!-- ✅ 課務工具 -->
+          <v-list-group value="tools">
+            <template #activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-toolbox-outline"
+                title="課務工具"
+                color="indigo"
+              />
+            </template>
+
+            <v-list-item
+              to="/Converters/ClassToOthers"
+              link
+              title="班級轉換"
+              prepend-icon="mdi-file-swap"
+              @click="handleNavClick"
+            />
+
+            <v-list-item
+              to="/Converters/SIDtoSYS"
+              link
+              title="學制轉換"
+              prepend-icon="mdi-file-refresh"
+              @click="handleNavClick"
+            />
+          </v-list-group>
+
+          <!-- ✅ 管理工具 -->
+          <v-list-group v-if="isAdmin" value="admin">
+            <template #activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-shield-crown"
+                title="管理工具"
+                color="deep-purple"
+              />
+            </template>
+
+            <v-list-item
+              to="/Tools/Meme"
+              link
+              title="梗圖搜尋"
+              prepend-icon="mdi-image-search"
+              @click="handleNavClick"
+            />
+
+            <v-list-item
+              to="/Tools/YTconverter"
+              link
+              title="YT下載"
+              prepend-icon="mdi-download"
+              @click="handleNavClick"
+            />
+          </v-list-group>
+        </v-list>
+      </v-navigation-drawer>
+    </div>
+    <!-- ✅ 主畫面 -->
+    <v-main v-if="isLoggedIn">
       <v-container>
         <slot />
       </v-container>
     </v-main>
 
+    <!-- ✅ 未登入 -->
     <v-main v-else class="d-flex align-center justify-center">
-      <v-card class="text-center pa-10" elevation="5" max-width="500">
-        <v-icon color="warning" size="60" class="mb-4">mdi-lock-alert</v-icon>
-        <v-card-title class="text-h5">需要登入</v-card-title>
-        <v-card-text class="text-subtitle-1">
-          請點擊右上角「登入系統」以存取課務輔助工具。
-        </v-card-text>
-        <v-btn
-          color="primary"
-          variant="flat"
-          class="mt-4"
-          @click="dialog = true"
-        >
-          前往登入
-        </v-btn>
+      <v-card class="pa-6 text-center" max-width="400">
+        <v-icon size="50" color="warning">mdi-lock</v-icon>
+        <h3 class="mt-2">需要登入</h3>
+        <v-btn class="mt-4" @click="dialog = true">登入</v-btn>
       </v-card>
     </v-main>
-
-    <v-dialog v-model="dialog" max-width="400">
-      <v-card>
-        <v-card-title class="text-h5 primary lighten-2">
-          使用者登入
-        </v-card-title>
-        <v-card-text class="pt-4">
-          <v-alert
-            v-if="loginError"
-            type="error"
-            density="compact"
-            class="mb-3"
-            >{{ loginError }}</v-alert
-          >
-          <v-text-field
-            v-model="username"
-            label="帳號 (ACCOUNT)"
-            prepend-inner-icon="mdi-account"
-            variant="outlined"
-            density="compact"
-            :disabled="isLoggingIn"
-            required
-            @keyup.enter="login"
-          ></v-text-field>
-          <v-text-field
-            v-model="password"
-            label="密碼 (PWD)"
-            type="password"
-            prepend-inner-icon="mdi-lock"
-            variant="outlined"
-            density="compact"
-            :disabled="isLoggingIn"
-            required
-            @keyup.enter="login"
-          ></v-text-field>
-        </v-card-text>
-        <v-card-actions class="d-flex justify-end">
-          <v-btn
-            color="error"
-            variant="text"
-            @click="dialog = false"
-            :disabled="isLoggingIn"
-          >
-            取消
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="flat"
-            :loading="isLoggingIn"
-            @click="login"
-            :disabled="!username || !password"
-          >
-            確認登入
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue"; // 🎯 引入 onMounted
-import { useNuxtApp } from "#app";
-import { navigateTo } from "#app";
+import { ref, computed, onMounted, watch } from "vue";
+import { useNuxtApp, navigateTo } from "#app";
+import { useDisplay } from "vuetify";
 import axios from "axios";
+import { useRoute } from "vue-router";
 
-// 假設您的 axios 實例名稱為 $curridataAPI
-const { $curridataAPI } = useNuxtApp();
+const route = useRoute();
+const isDBActive = computed(() => route.path.startsWith("/DB"));
 
-// -----------------------------------------------------------------
-// 🎯 登入狀態管理
-// -----------------------------------------------------------------
+/* ------------------ ✅ responsive ------------------ */
+const { mobile } = useDisplay();
+const drawer = ref(false); // 🔥 不要預設 true
 
-// 儲存登入的使用者資訊，包含 name (顯示名稱)、username (登入帳號) 和 auth (權限)
-const user = ref<{
-  name: string;
-  username: string;
-  auth: number | string;
-} | null>(null);
+// ✅ 🔥 關鍵：讓 drawer 跟 mobile 同步（解你那個 bug）
+watch(
+  mobile,
+  (val) => {
+    drawer.value = !val; // 桌機開、手機關
+  },
+  { immediate: true }
+);
+
+/* ------------------ ✅ user ------------------ */
+const user = ref<any>(null);
 const dialog = ref(false);
 const username = ref("");
 const password = ref("");
-const isLoggingIn = ref(false);
 const loginError = ref("");
 
 const isLoggedIn = computed(() => !!user.value);
+const isAdmin = computed(() => user.value?.auth === "admin");
 
-const isAdmin = computed(() => {
-  // 只有在 user 存在且 user.auth 嚴格等於 'admin' 時，視為管理員
-  return user.value && user.value.auth === "admin";
-});
+const { $curridataAPI } = useNuxtApp();
 
-const isCurri = computed(() => {
-  // 只有在 user 存在且 user.auth 嚴格等於 'curri' 時，視為課務組員
-  return user.value && user.value.auth === "curri";
-});
-
-// -----------------------------------------------------------------
-// 🎯 狀態持久化：讀取 localStorage (在伺服器端渲染之後執行)
-// -----------------------------------------------------------------
-
+/* ------------------ ✅ 初始化 ------------------ */
 onMounted(() => {
-  // 檢查瀏覽器是否支援 localStorage
-  if (typeof localStorage !== "undefined") {
-    const storedUser = localStorage.getItem("curridata_user");
-    if (storedUser) {
-      try {
-        // 讀取並設置 user 狀態
-        user.value = JSON.parse(storedUser);
-      } catch (e) {
-        console.error("解析 localStorage 使用者狀態失敗:", e);
-        // 如果解析失敗，則清除舊的錯誤資料
-        localStorage.removeItem("curridata_user");
-      }
-    }
+  const storedUser = localStorage.getItem("curridata_user");
+
+  if (storedUser) {
+    user.value = JSON.parse(storedUser);
+
+    // ✅ 🔥 補一刀，確保登入後開啟
+    drawer.value = !mobile.value;
   }
 });
 
-/**
- * 處理登入請求：呼叫後端 /api/user_login 接口進行驗證
- */
+/* ------------------ ✅ UX ------------------ */
+const handleNavClick = () => {
+  if (mobile.value) drawer.value = false;
+};
+
+/* ------------------ ✅ login ------------------ */
 async function login() {
-  if (!username.value || !password.value) {
-    loginError.value = "請輸入完整的帳號和密碼。";
-    return;
-  }
-
-  isLoggingIn.value = true;
-  loginError.value = "";
-
   try {
-    const response = await $curridataAPI.post("/api/user_login", {
+    const res = await $curridataAPI.post("/api/user_login", {
       username: username.value,
       password: password.value,
     });
 
-    // 成功登入：儲存回傳的 NAME 和 AUTH
-    const userData = {
-      name: response.data.user.name,
-      auth: response.data.user.auth,
-      username: response.data.user.username,
+    const userData = res.data.user;
+
+    user.value = {
+      name: userData.name,
+      username: username.value,
+      auth: userData.auth,
     };
-    user.value = userData;
+
+    localStorage.setItem("curridata_user", JSON.stringify(user.value));
+    localStorage.setItem("curridata_token", res.data.access_token);
+
     dialog.value = false;
 
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("curridata_user", JSON.stringify(userData));
-    }
+    // ✅ 🔥 重點：登入後立刻開 sidebar
+    drawer.value = !mobile.value;
 
-    password.value = "";
-    navigateTo("/welcome", { replace: true });
-  } catch (error) {
-    // 🎯 使用 axios.isAxiosError 解決 TypeScript 'unknown' 錯誤
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
-
-      if (status === 401) {
-        // 情況 A：後端明確回傳 401 (帳密錯誤)
-        loginError.value =
-          error.response?.data?.detail || "帳號或密碼錯誤，請重新輸入。";
-      } else if (!error.response) {
-        // 情況 B：完全沒收到回應 (網路斷線或伺服器當機)
-        loginError.value = "無法連線至伺服器，請檢查網路連線。";
-      } else {
-        // 情況 C：其他 HTTP 錯誤 (如 500, 404 等)
-        loginError.value = `伺服器回應異常 (${status})，請稍後再試。`;
-      }
-      console.error("Axios 登入錯誤:", error.response?.data || error.message);
-    } else {
-      // 情況 D：非 Axios 產生的錯誤 (例如程式碼邏輯噴錯)
-      console.error("非 API 錯誤:", error);
-      loginError.value = "系統發生未知錯誤。";
-    }
-
-    // 登入失敗處理
-    user.value = null;
-    if (typeof localStorage !== "undefined") {
-      localStorage.removeItem("curridata_user");
-    }
-  } finally {
-    isLoggingIn.value = false;
+    navigateTo("/welcome");
+  } catch {
+    loginError.value = "登入失敗";
   }
 }
 
-/**
- * 處理登出
- */
+/* ------------------ ✅ logout ------------------ */
 function logout() {
-  user.value = null; // 清除使用者狀態
+  user.value = null;
+  localStorage.removeItem("curridata_user");
+  localStorage.removeItem("curridata_token");
 
-  // 🎯 關鍵修改：從 localStorage 移除使用者資訊
-  if (typeof localStorage !== "undefined") {
-    localStorage.removeItem("curridata_user");
-    localStorage.removeItem("curridata_token");
-  }
+  drawer.value = false;
+
   navigateTo("/login");
-  alert("您已登出。");
-
-  // 登出後導向首頁
-  navigateTo("/", { replace: true });
 }
 </script>
 
@@ -391,10 +280,5 @@ function logout() {
 .v-app-bar a {
   text-decoration: none;
   color: inherit;
-}
-/* 🎯 確保未登入時 v-main 佔據整個寬度，且內容不受 v-navigation-drawer 的邊距影響 */
-.v-main:not(.ml-0) {
-  /* 這裡需要覆蓋 Vuetify 預設為 v-main 加上導航列寬度的邊距 */
-  margin-left: 0 !important;
 }
 </style>
