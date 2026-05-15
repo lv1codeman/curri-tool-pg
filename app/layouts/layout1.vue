@@ -132,6 +132,13 @@
               prepend-icon="mdi-file-refresh"
               @click="handleNavClick"
             />
+            <v-list-item
+              to="/Converters/CopyDeptsDetails"
+              link
+              title="email複製"
+              prepend-icon="mdi-email-multiple-outline"
+              @click="handleNavClick"
+            />
           </v-list-group>
 
           <!-- ✅ 管理工具 -->

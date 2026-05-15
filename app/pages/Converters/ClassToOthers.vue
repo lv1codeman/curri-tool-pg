@@ -107,7 +107,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { useNuxtApp } from "#app";
+import { useNuxtApp, navigateTo } from "#app";
 import { sampleContent } from "@/utils/class_sample.js";
 
 definePageMeta({
@@ -218,6 +218,7 @@ onMounted(async () => {
     console.log("Map size:", classMap.value.size);
   } catch (error) {
     console.error("載入失敗:", error);
+    navigateTo("/login");
   }
 });
 
@@ -246,7 +247,9 @@ const convertedText = computed(() => {
     .map((line) => {
       const key = normalize(line);
       const data = classMap.value.get(key);
-
+      if (data.length <= 0) {
+        navigateTo("/welcome");
+      }
       return data ? fn(data) || "查無資料" : "查無資料";
     })
     .join("\n");
