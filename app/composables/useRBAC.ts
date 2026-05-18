@@ -10,11 +10,22 @@ export const useRBAC = () => {
       "/Tools",
     ],
 
-    curri: ["/DB/DBmaintain", "/DB/ClassDeptshort", "/Converters", "/Info"],
+    curri: [
+      "/welcome",
+      "/DB/DBmaintain",
+      "/DB/ClassDeptshort",
+      "/Converters",
+      "/Info",
+    ],
 
-    user: ["/Converters/ClassToOthers", "/Converters/SIDtoSYS", "/Info"],
+    user: [
+      "/welcome",
+      "/Converters/ClassToOthers",
+      "/Converters/SIDtoSYS",
+      "/Info",
+    ],
 
-    guest: ["/Info"],
+    guest: ["/welcome", "/Info"],
   };
 
   const canAccess = (role: string, path: string) => {
