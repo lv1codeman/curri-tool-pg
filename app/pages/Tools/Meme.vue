@@ -149,8 +149,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 
-// Nuxt 配置
-definePageMeta({ layout: "layout1" });
+definePageMeta({
+  layout: "layout1",
+});
 const { $curridataAPI } = useNuxtApp();
 
 // 狀態定義

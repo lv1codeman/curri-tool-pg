@@ -93,14 +93,14 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-// 假設你新增了一個學號範例檔案
-// 由於你沒有提供，這裡先使用一個本地的範例字串
-const sampleContent = "S1234567\nM9876543\nD0000001\nZ5555555";
 
-//套用layout
 definePageMeta({
   layout: "layout1",
 });
+
+// 假設你新增了一個學號範例檔案
+// 由於你沒有提供，這裡先使用一個本地的範例字串
+const sampleContent = "S1234567\nM9876543\nD0000001\nZ5555555";
 
 // --- 狀態變數 ---
 const inputText = ref("");

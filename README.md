@@ -10,7 +10,9 @@
 - 貼上後想看不同結果可選擇下拉選項
 - 可將結果複製貼回 Excel 中使用。
 
-# 在本地端執行
+# 開發筆記
+
+## 在本地端執行
 
 1. 安裝使用到的模組，產生 node_modules
 
@@ -28,7 +30,7 @@ pnpm install
 pnpm dev
 ```
 
-# 上傳到 github page
+## 上傳到 github page
 
 依序執行
 
@@ -39,3 +41,8 @@ pnpm run generate
 ```
 pnpm run deploy
 ```
+
+## useMenu
+
+useMenu：控制不同身份可以看到 siderbar 的內容
+useRBAC：設定不同身份可以存取的頁面

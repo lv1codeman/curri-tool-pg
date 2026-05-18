@@ -1,8 +1,8 @@
 <template>
   <div>
     <DataTableCRUD
-      :title="'使用者管理'"
-      :tableTitle="'Members'"
+      :title="'帳號管理'"
+      :tableTitle="'使用者列表'"
       :headers="headers"
       :apiUrl="''"
       :apiEndpoints="memberApiEndpoints"
@@ -78,7 +78,7 @@ const formFields = [
     key: "auth",
     label: "權限",
     type: "select",
-    items: ["user", "admin"], // ✅ 權限下拉選
+    items: ["admin", "curri", "user", "guest"], // ✅ 權限下拉選
     rules: [requiredRule],
   },
 ];

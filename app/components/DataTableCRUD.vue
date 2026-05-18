@@ -198,8 +198,6 @@ const fetchData = async () => {
       props.apiUrl + props.apiEndpoints.get
     );
     items.value = response.data;
-    console.log("check here");
-    console.log(items.value);
   } catch (error) {
     console.error(error);
     errorMessage.value = "無法從 API 取得資料。";

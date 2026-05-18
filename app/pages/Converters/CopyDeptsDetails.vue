@@ -172,13 +172,13 @@
 </template>
 
 <script setup>
-definePageMeta({ layout: "layout1" });
-
 import { ref, computed, onMounted, watch } from "vue";
 import { useNuxtApp } from "#app";
+definePageMeta({
+  layout: "layout1",
+});
 
 const { $curridataAPI } = useNuxtApp();
-
 const allDepts = ref([]);
 const selectedStype = ref("全部");
 const selectedColleges = ref([]);

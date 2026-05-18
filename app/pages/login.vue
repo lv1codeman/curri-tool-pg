@@ -5,12 +5,12 @@
   >
     <v-card class="login-card rounded-lg pa-2" width="420" elevation="6">
       <!-- 標題 -->
-      <v-card-title class="text-h5 primary lighten-2">
-        請輸入帳密登入
-      </v-card-title>
-      <v-card-subtitle> 本系統使用supabase雲端資料庫， </v-card-subtitle>
+      <v-card-title class="text-h5"> 請輸入帳密登入 </v-card-title>
+
+      <v-card-subtitle> 本系統使用 supabase 雲端資料庫 </v-card-subtitle>
+
       <v-card-subtitle>
-        此資料庫久未使用會睡眠，登入約需等候20-30秒
+        資料庫久未使用會睡眠，登入約需等候 20~30 秒
       </v-card-subtitle>
 
       <!-- 內容 -->
@@ -49,8 +49,8 @@
 
         <v-btn
           color="primary"
-          variant="flat"
           :loading="loading"
+          variant="flat"
           @click="login"
           :disabled="!username || !password"
         >
@@ -64,20 +64,25 @@
 <script setup>
 import { ref } from "vue";
 import { useNuxtApp, navigateTo } from "#app";
+import { useUser } from "~/composables/useUser";
 
 definePageMeta({
-  layout: false, // ✅ 不用 layout1（避免被 auth 擋）
+  layout: false,
 });
 
 const { $curridataAPI } = useNuxtApp();
+
+/* ✅ ✅ ✅ 使用 store */
+const { setUser } = useUser();
 
 const username = ref("");
 const password = ref("");
 const loading = ref(false);
 const error = ref("");
 
-// ✅ 登入
 async function login() {
+  if (!username.value || !password.value) return;
+
   loading.value = true;
   error.value = "";
 
@@ -86,36 +91,38 @@ async function login() {
       username: username.value,
       password: password.value,
     });
-
     const token = res.data.access_token;
     const user = res.data.user;
 
-    // ✅ 存 token
-    localStorage.setItem("curridata_token", token);
-
-    // ✅ 存 user
-    localStorage.setItem(
-      "curridata_user",
-      JSON.stringify({
+    /* ✅ ✅ ✅ 🔥 改成 store（核心） */
+    setUser(
+      {
         id: user.id,
         name: user.name,
         auth: user.auth,
         username: username.value,
-      })
+      },
+      token
     );
 
-    // ✅ 跳轉
-    navigateTo("/welcome");
+    /* ✅ redirect */
+    redirectByRole(user.auth);
   } catch (err) {
-    console.error("login error:", err);
+    console.error(err);
 
-    error.value = err.response?.data?.detail || "登入失敗，請檢查帳號或密碼";
+    error.value = err.response?.data?.detail || "登入失敗，請確認帳號密碼";
   } finally {
     loading.value = false;
   }
 }
 
-// ✅ 清空
+/* ✅ ✅ ✅ 依角色導向 */
+function redirectByRole(role) {
+  // 不做身份導向，都導向welcome頁面
+  return navigateTo("/welcome");
+}
+
+/* 清空 */
 function clear() {
   username.value = "";
   password.value = "";
@@ -128,4 +135,3 @@ function clear() {
   transform: translateY(-50px);
 }
 </style>
-``

@@ -206,16 +206,12 @@ onMounted(async () => {
     const res = await $curridataAPI.get("/get_all_data");
     const data = res.data;
 
-    console.log("筆數:", data?.length);
-
     data.forEach((item) => {
       if (item.CLASS) {
         const key = normalize(item.CLASS); // ✅ 同步清理
         classMap.value.set(key, item);
       }
     });
-
-    console.log("Map size:", classMap.value.size);
   } catch (error) {
     console.error("載入失敗:", error);
     navigateTo("/login");
