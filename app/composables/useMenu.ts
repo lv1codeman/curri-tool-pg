@@ -87,7 +87,19 @@ export const useMenu = () => {
         },
       ],
     },
-
+    {
+      title: "蛇窩",
+      icon: "mdi-tools",
+      group: true,
+      roles: ["admin"],
+      children: [
+        {
+          title: "異環每日",
+          path: "/Sixer/NTEdaily",
+          roles: ["admin", "guest"],
+        },
+      ],
+    },
     {
       title: "工具",
       icon: "mdi-tools",
