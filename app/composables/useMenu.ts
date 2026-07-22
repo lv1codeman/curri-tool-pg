@@ -61,7 +61,7 @@ export const useMenu = () => {
 
     {
       title: "課務工具",
-      icon: "mdi-refresh",
+      icon: "mdi-tools",
       group: true,
       roles: ["admin", "curri", "user"],
       children: [
