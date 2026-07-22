@@ -264,6 +264,12 @@ const selectWidth = computed(() => {
 </script>
 
 <style scoped>
+.my-card-wrapper {
+  max-width: 620px; /* 或 width: 580px; 依據你下方輸入框的總寬度微調 */
+  width: 100%; /* 在小螢幕上會自動縮小，保持響應式 */
+  padding: 5px;
+}
+
 .btnCopySample {
   background-color: aqua !important;
 }

@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: process.env.NODE_ENV === "production" ? "/curri-tool-pg/" : "/",
+    baseURL: import.meta.env.PROD ? "/curri-tool-pg/" : "/",
     buildAssetsDir: "/static/",
   },
   compatibilityDate: "2024-11-01",
@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  ssr: process.env.NUXT_SSR === "true",
+  ssr: import.meta.env.NUXT_SSR === "true",
 
   // when enabling ssr option you need to disable inlineStyles and maybe devLogs
   features: {
@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     // },
     // 公開變數，客戶端和伺服器端都可用
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+      apiBaseUrl: import.meta.env.NUXT_PUBLIC_API_BASE_URL,
     },
   },
   vuetify: {

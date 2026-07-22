@@ -123,7 +123,7 @@ onMounted(() => {
   ready.value = true;
 });
 
-if (process.client && !user.value) {
+if (import.meta.client && !user.value) {
   initUser();
 }
 

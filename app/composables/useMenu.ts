@@ -80,6 +80,13 @@ export const useMenu = () => {
         },
 
         {
+          title: "生日轉民國年",
+          icon: "mdi-file-swap",
+          path: "/Converters/Bdate",
+          roles: ["admin", "curri"],
+        },
+
+        {
           title: "Email複製",
           icon: "mdi-email-multiple-outline",
           path: "/Converters/CopyDeptsDetails",

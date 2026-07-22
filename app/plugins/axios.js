@@ -2,13 +2,10 @@ import axios from "axios";
 import { useUser } from "~/composables/useUser";
 
 export default defineNuxtPlugin((nuxtApp) => {
-  // const baseURL = process.dev
-  //   ? "http://127.0.0.1:8000"
-  //   : "https://curridata-server-pg.onrender.com";
-  // const baseURL = "https://curridata-server-pg.onrender.com";
-  const baseURL = "https://curridata-server-pg.vercel.app/";
+  // 讀取.env中的網址作為baseURL
+  const config = useRuntimeConfig();
   const api = axios.create({
-    baseURL,
+    baseURL: config.public.apiBaseUrl,
   });
 
   /* ✅ ✅ ✅ request：自動帶 token（改用 store） */

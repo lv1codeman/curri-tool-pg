@@ -103,8 +103,8 @@
       </v-card>
       <v-card
         class="card-item cursor-pointer"
-        title="學程平台"
-        subtitle="仍未完善"
+        title="學程檢核平台"
+        subtitle="圖資處家維製作"
         :href="'https://webap1.ncue.edu.tw/PRO/'"
         target="_blank"
       >
