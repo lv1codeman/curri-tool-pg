@@ -2,10 +2,10 @@ import axios from "axios";
 import { useUser } from "~/composables/useUser";
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const baseURL = process.dev
-    ? "http://127.0.0.1:8000"
-    : "https://curridata-server-pg.onrender.com";
-
+  // const baseURL = process.dev
+  //   ? "http://127.0.0.1:8000"
+  //   : "https://curridata-server-pg.onrender.com";
+  const baseURL = "https://curridata-server-pg.onrender.com";
   const api = axios.create({
     baseURL,
   });

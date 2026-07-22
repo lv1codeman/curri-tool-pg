@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <div class="container">
+      <div class="text-h6 text-center">異環每日/每週</div>
       <!-- ✅ 進度 -->
       <v-card class="mb-3 pa-3 rounded-xl py-5">
         <div class="d-flex justify-space-between">
@@ -26,61 +27,62 @@
 
       <!-- ✅ Tabs -->
       <v-tabs v-model="tab" grow show-arrows>
-        <v-tab
-          v-for="c in categories"
-          :key="c"
-          :value="c"
-          class="d-flex align-center justify-center"
-        >
-          <div class="tab-label">
-            <v-badge
-              v-if="getUnfinishedCount(c) > 0"
-              :content="getUnfinishedCount(c)"
-              :color="getUnfinishedCount(c) === 0 ? 'green' : 'red'"
-              offset-x="-20"
-              offset-y="2"
-            >
-              <span>{{ c }}</span>
-            </v-badge>
-            <span v-else>{{ c }}</span>
-          </div>
+        <v-tab v-for="c in categories" :key="c" :value="c" class="tab-wrapper">
+          <!-- ✅ tab文字 -->
+          <span>{{ c }}</span>
+
+          <v-badge
+            v-if="getUnfinishedCount(c) > 0"
+            :content="getUnfinishedCount(c)"
+            color="red"
+            location="top end"
+            :offset-x="isMobile ? -12 : -15"
+            :offset-y="isMobile ? -5 : -2"
+          >
+          </v-badge>
         </v-tab>
       </v-tabs>
 
       <!-- ✅ 任務 -->
       <v-window v-model="tab" touch>
         <v-window-item v-for="c in categories" :key="c" :value="c">
-          <TransitionGroup tag="div" class="task-list mt-2" name="move">
-            <v-col v-for="item in filteredTasks(c)" :key="item.name" cols="12">
-              <v-card
-                class="task-card"
-                :class="[getColor(item.type), { done: item.done }]"
-                @click="toggleDone(item)"
+          <v-row class="mt-2">
+            <TransitionGroup tag="div" class="task-list w-100" name="move">
+              <v-col
+                v-for="item in filteredTasks(c)"
+                :key="item.name"
+                cols="12"
               >
-                <!-- ✅ 左：目標 -->
-                <div class="left">
-                  {{ item.name }}
-                </div>
-
-                <!-- ✅ 中：膠囊 -->
-                <div class="middle">
-                  <div class="pill">
-                    {{ item.freq }}
+                <v-card
+                  class="task-card"
+                  :class="[getColor(item.type), { done: item.done }]"
+                  @click="toggleDone(item)"
+                >
+                  <!-- ✅ 左：目標 -->
+                  <div class="left">
+                    {{ item.name }}
                   </div>
-                </div>
 
-                <!-- ✅ 右：備註 -->
-                <div class="right">
-                  {{ item.desc }}
-                </div>
+                  <!-- ✅ 中：膠囊 -->
+                  <div class="middle">
+                    <div class="pill">
+                      {{ item.freq }}
+                    </div>
+                  </div>
 
-                <!-- ✅ 右上 icon -->
-                <v-icon class="status-icon">
-                  {{ item.done ? "mdi-check-circle" : "mdi-circle-outline" }}
-                </v-icon>
-              </v-card>
-            </v-col>
-          </TransitionGroup>
+                  <!-- ✅ 右：備註 -->
+                  <div class="right">
+                    {{ item.desc }}
+                  </div>
+
+                  <!-- ✅ 右上 icon -->
+                  <v-icon class="status-icon">
+                    {{ item.done ? "mdi-check-circle" : "mdi-circle-outline" }}
+                  </v-icon>
+                </v-card>
+              </v-col>
+            </TransitionGroup>
+          </v-row>
         </v-window-item>
       </v-window>
     </div>
@@ -89,6 +91,10 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useDisplay } from "vuetify";
+
+const { mobile } = useDisplay();
+const isMobile = computed(() => mobile.value);
 
 const categories = ["地圖資源", "好感度", "都市大亨", "自宅", "體力副本"];
 const tab = ref("地圖資源");
@@ -223,8 +229,6 @@ const getColor = (type) =>
     font-size: 14px;
   }
   .task-card > .middle > .pill {
-    /* font-size: 14px; */
-    /* padding: 2px 5px; */
     border-radius: 999px;
     background: #333;
     color: white;
@@ -245,6 +249,14 @@ const getColor = (type) =>
   height: 100%;
   overflow-y: auto;
   padding: 10px;
+  overflow-x: hidden;
+  /* overflow-y: hidden; */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 50px;
+}
+
+.container::-webkit-scrollbar {
+  display: none;
 }
 
 /* ✅ 卡片 layout */
@@ -278,7 +290,7 @@ const getColor = (type) =>
 
 /* ✅ 右60% */
 .right {
-  width: 65%;
+  width: 60%;
   display: flex;
   align-items: center;
   word-break: break-word;
@@ -345,5 +357,19 @@ const getColor = (type) =>
   align-items: center;
   font-size: 14px;
   line-height: 20px;
+}
+
+.tab-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ✅ badge 固定右上角 */
+.tab-badge {
+  position: absolute;
+  top: 16px;
+  right: 30px;
 }
 </style>

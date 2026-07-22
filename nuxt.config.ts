@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: [],
+  css: ["vuetify/styles"],
   modules: ["@nuxt/fonts", "vuetify-nuxt-module"],
   // 運行時配置 (Runtime Config)
   runtimeConfig: {
@@ -57,7 +57,7 @@ export default defineNuxtConfig({
       },
 
       // /* If customizing sass global variables ($utilities, $reset, $color-pack, $body-font-family, etc) */
-      // disableVuetifyStyles: true,
+      // disableVuetifyStyles: false,
       styles: {
         configFile: "assets/settings.scss",
       },

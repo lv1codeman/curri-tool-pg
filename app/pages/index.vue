@@ -7,7 +7,7 @@
       <!-- 標題 -->
       <v-card-title class="text-h5"> 請輸入帳密登入 </v-card-title>
 
-      <v-card-subtitle> 本系統使用 supabase 雲端資料庫 </v-card-subtitle>
+      <v-card-subtitle> 本系統使用 Neon 雲端資料庫 </v-card-subtitle>
 
       <v-card-subtitle>
         資料庫久未使用會睡眠，登入約需等候 20~30 秒

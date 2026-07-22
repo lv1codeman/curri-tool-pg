@@ -87,38 +87,38 @@ export const useMenu = () => {
         },
       ],
     },
-    {
-      title: "蛇窩",
-      icon: "mdi-tools",
-      group: true,
-      roles: ["admin"],
-      children: [
-        {
-          title: "異環每日",
-          path: "/Sixer/NTEdaily",
-          roles: ["admin", "guest"],
-        },
-      ],
-    },
-    {
-      title: "工具",
-      icon: "mdi-tools",
-      group: true,
-      roles: ["admin"],
-      children: [
-        {
-          title: "梗圖搜尋",
-          path: "/Tools/Meme",
-          roles: ["admin", "curri", "user", "guest"],
-        },
+    // {
+    //   title: "蛇窩",
+    //   icon: "mdi-tools",
+    //   group: true,
+    //   roles: ["admin"],
+    //   children: [
+    //     {
+    //       title: "異環每日",
+    //       path: "/Sixer/NTEdaily",
+    //       roles: ["admin", "guest"],
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "工具",
+    //   icon: "mdi-tools",
+    //   group: true,
+    //   roles: ["admin"],
+    //   children: [
+    //     {
+    //       title: "梗圖搜尋",
+    //       path: "/Tools/Meme",
+    //       roles: ["admin", "curri", "user", "guest"],
+    //     },
 
-        {
-          title: "YT下載",
-          path: "/Tools/YTconverter",
-          roles: ["admin", "curri", "user", "guest"],
-        },
-      ],
-    },
+    //     {
+    //       title: "YT下載",
+    //       path: "/Tools/YTconverter",
+    //       roles: ["admin", "curri", "user", "guest"],
+    //     },
+    //   ],
+    // },
   ];
 
   return { menu };
