@@ -1,16 +1,17 @@
-# 功能介紹
-
-可將班級簡稱轉成對應的資訊。
-
-# 使用教學
-
-> 輸入限制：班級簡稱
-
-- 在左輸入框貼上從 Excel 複製的班級簡稱，右邊輸入框會自動產出結果。
-- 貼上後想看不同結果可選擇下拉選項
-- 可將結果複製貼回 Excel 中使用。
-
 # 開發筆記
+
+## 系統架構
+
+本專案為 curri-tool 的客戶端(前端)，資料庫使用 PostgreSQL  
+雲端伺服器(後端)架設在 render.com  
+雲端資料庫架設在 neon.com  
+帳號皆為lv1codeman@gmail.com
+
+客戶端訪問伺服器端，伺服器根據要求向資料庫端存取，透過 axios api 回傳給客戶端網頁
+網頁資料大多需要向伺服器端訪問取得，所以您必須架設自己的伺服器和資料庫  
+伺服器端專案網址為`https://github.com/lv1codeman/curridata_server_pg`
+雲端伺服器 api 網址為`https://curridata-server-pg.vercel.app`
+(nuxt.config.ts 會讀取.env 的 NUXT_PUBLIC_API_BASE_URL=https://curridata-server-pg.vercel.app作為apiBaseUrl的參數)
 
 ## 在本地端執行
 
@@ -30,16 +31,21 @@ pnpm install
 pnpm dev
 ```
 
-## 上傳到 github page
+## 更新 github page
 
-依序執行
+當想要更新 github page 時，執行以下指令：
+
+1. pnpm run generate
+2. git commit
+3. git push
+
+以下這段 yaml 檔的代碼，代表在 push 的時候會自動 deploy 到 github page
 
 ```
-pnpm run generate
-```
-
-```
-pnpm run deploy
+on:
+  push:
+    branches:
+      - main
 ```
 
 ## useMenu
