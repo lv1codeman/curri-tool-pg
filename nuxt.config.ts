@@ -3,7 +3,9 @@ export default defineNuxtConfig({
   app: {
     // baseURL: import.meta.env.PROD ? "/curri-tool-pg/" : "/",
     // baseURL: import.meta.dev ? "/" : "/curri-tool-pg/",
-    baseURL: "/",
+
+    // baseURL: "/", // 本地開發用
+    baseURL: "/curri-tool-pg/", //上傳github page用
     buildAssetsDir: "/static/",
   },
   compatibilityDate: "2024-11-01",
