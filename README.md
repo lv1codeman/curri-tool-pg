@@ -28,8 +28,7 @@ pnpm install
 
 2. 設定 server 端網址  
    建立一個.env 檔放在專案的根目錄  
-   內容貼上 NUXT_PUBLIC_API_BASE_URL=[server 端網址]  
-   server 端網址請詢問管理者
+   內容貼上 NUXT_PUBLIC_API_BASE_URL=[server 端 API 網址]
 3. 執行開發環境測試
 
 ```

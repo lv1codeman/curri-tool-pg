@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   app: {
     // baseURL: import.meta.env.PROD ? "/curri-tool-pg/" : "/",
-    baseURL: import.meta.dev ? "/" : "/curri-tool-pg/",
+    // baseURL: import.meta.dev ? "/" : "/curri-tool-pg/",
+    baseURL: "/",
     buildAssetsDir: "/static/",
   },
   compatibilityDate: "2024-11-01",
@@ -12,7 +13,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  ssr: false,
+  ssr: true,
 
   // when enabling ssr option you need to disable inlineStyles and maybe devLogs
   features: {
