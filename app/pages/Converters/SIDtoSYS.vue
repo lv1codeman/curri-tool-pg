@@ -22,6 +22,7 @@
               <li>學號開頭為 S = 學士班</li>
               <li>學號開頭為 M = 碩士班</li>
               <li>學號開頭為 D = 博士班</li>
+              <li>學號開頭為 A = 進院碩士班</li>
               <li>其他開頭 = 查無資料</li>
             </ul>
           </v-card-text>
@@ -100,7 +101,7 @@ definePageMeta({
 
 // 假設你新增了一個學號範例檔案
 // 由於你沒有提供，這裡先使用一個本地的範例字串
-const sampleContent = "S1234567\nM9876543\nD0000001\nZ5555555";
+const sampleContent = "S1234567\nM9876543\nD0000001\nA1122334\nZ5555555";
 
 // --- 狀態變數 ---
 const inputText = ref("");
@@ -125,6 +126,8 @@ const convertStudentIdToSystem = (studentId) => {
       return "碩士班";
     case "D":
       return "博士班";
+    case "A":
+      return "進院碩士班";
     default:
       return "查無資料";
   }
