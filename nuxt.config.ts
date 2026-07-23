@@ -1,7 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: import.meta.env.PROD ? "/curri-tool-pg/" : "/",
+    // baseURL: import.meta.env.PROD ? "/curri-tool-pg/" : "/",
+    baseURL: import.meta.dev ? "/" : "/curri-tool-pg/",
     buildAssetsDir: "/static/",
   },
   compatibilityDate: "2024-11-01",
@@ -11,7 +12,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  ssr: import.meta.env.NUXT_SSR === "true",
+  ssr: false,
 
   // when enabling ssr option you need to disable inlineStyles and maybe devLogs
   features: {
@@ -33,14 +34,8 @@ export default defineNuxtConfig({
   modules: ["@nuxt/fonts", "vuetify-nuxt-module"],
   // 運行時配置 (Runtime Config)
   runtimeConfig: {
-    // 私有變數，只在伺服器端可用
-    // 可以用來放密碼等敏感資訊
-    // private: {
-    //   apiSecret: '...'
-    // },
-    // 公開變數，客戶端和伺服器端都可用
     public: {
-      apiBaseUrl: import.meta.env.NUXT_PUBLIC_API_BASE_URL,
+      apiBaseUrl: "",
     },
   },
   vuetify: {
