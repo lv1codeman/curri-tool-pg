@@ -59,7 +59,7 @@ defineEmits<{
       v-if="node.children && node.children.length"
       class="pl-4 space-y-3 border-l-2 border-slate-800 ml-4"
     >
-      <CoolTreeNode
+      <DraggableMenuTreeNode
         v-for="child in node.children"
         :key="child.name"
         :node="child"

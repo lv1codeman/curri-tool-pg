@@ -1,11 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    // baseURL: import.meta.env.PROD ? "/curri-tool-pg/" : "/",
-    // baseURL: import.meta.dev ? "/" : "/curri-tool-pg/",
-
-    // baseURL: "/", // 本地開發用
-    baseURL: "/curri-tool-pg/", //上傳github page用
+    // 這行有紅字很煩，但這樣寫才能在gh-page上和本地端運作正常且一行搞定
+    baseURL: process.env.NODE_ENV === "production" ? "/curri-tool-pg/" : "/",
     buildAssetsDir: "/static/",
   },
   compatibilityDate: "2024-11-01",

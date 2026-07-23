@@ -102,7 +102,7 @@
         <v-btn class="mt-4" @click="navigateTo('/login')">登入</v-btn>
       </v-card>
     </v-main>
-    <CoolFloatingMenu />
+    <DraggableMenu />
   </v-app>
 </template>
 <script setup lang="ts">

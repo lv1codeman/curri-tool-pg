@@ -267,7 +267,7 @@ onUnmounted(() => {
           <!-- 3. 節點樹狀區域 -->
           <div :style="{ overflowY: 'auto', flex: 1 }">
             <ul :style="{ listStyle: 'none', padding: '0px', margin: '0px' }">
-              <CoolTreeNode
+              <DraggableMenuTreeNode
                 v-for="node in siteTree"
                 :key="node.name"
                 :node="node"
