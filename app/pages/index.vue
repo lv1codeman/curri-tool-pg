@@ -7,10 +7,10 @@
       <!-- 標題 -->
       <v-card-title class="text-h5"> 請輸入帳密登入 </v-card-title>
 
-      <v-card-subtitle> 本系統使用 Neon 雲端資料庫 </v-card-subtitle>
+      <v-card-subtitle> 本系統雲端伺服器架設於vercel.com </v-card-subtitle>
 
       <v-card-subtitle>
-        資料庫久未使用會睡眠，登入約需等候 20~30 秒
+        每次訪問約需等候5秒左右，請耐心等候使用，謝謝。
       </v-card-subtitle>
 
       <!-- 內容 -->

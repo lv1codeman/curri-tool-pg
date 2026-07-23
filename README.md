@@ -1,9 +1,7 @@
-# 開發筆記
-
 ## 系統架構
 
 本專案為 curri-tool 的客戶端(前端)，資料庫使用 PostgreSQL  
-雲端伺服器(後端)架設在 render.com  
+雲端伺服器(後端)架設在 vercel.com  
 雲端資料庫架設在 neon.com  
 帳號皆為lv1codeman@gmail.com
 
@@ -12,6 +10,13 @@
 伺服器端專案網址為`https://github.com/lv1codeman/curridata_server_pg`
 雲端伺服器 api 網址為`https://curridata-server-pg.vercel.app`
 (nuxt.config.ts 會讀取.env 的 NUXT_PUBLIC_API_BASE_URL=https://curridata-server-pg.vercel.app作為apiBaseUrl的參數)
+
+## 使用注意
+
+因為後端伺服器架設在 vercel.com，是一種 serverless 的服務，
+所以休眠後重啟速度較快，但也因此每次訪問時需要的時間會稍微久一點，請耐心使用
+
+之前架在 render.com 沒有這問題，但每次休眠後重啟需要等候 20~30 秒實在太久了...
 
 ## 在本地端執行
 
