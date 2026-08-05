@@ -34,6 +34,9 @@ jobs:
       # 3. 在 Actions 雲端執行打包 (產出最新的 .output/public)
       - name: Build / Generate Nuxt
         run: npx nuxi generate
+        env:
+          # 💡 讓 Actions 在打包時讀取 GitHub Repository Variable
+          NUXT_PUBLIC_API_BASE_URL: ${{ vars.NUXT_PUBLIC_API_BASE_URL }}
 
       # 4. 上傳雲端剛產出的 .output/public 目錄
       - name: Upload pages artifact

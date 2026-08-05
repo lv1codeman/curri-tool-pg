@@ -37,20 +37,8 @@ pnpm dev
 
 ## 更新 github page
 
-當想要更新 github page 時，執行以下指令：
-
-1. pnpm run generate
-2. git commit
-3. git push
-
-以下這段 yaml 檔的代碼，代表在 push 的時候會自動 deploy 到 github page
-
-```
-on:
-  push:
-    branches:
-      - main
-```
+直接 git push 後由 github action 自動發布，
+發布時會套用 Settings>Secret and variables>Actions>Variables 裡面的 Repository variables 取得 server 端網址
 
 ## useMenu
 

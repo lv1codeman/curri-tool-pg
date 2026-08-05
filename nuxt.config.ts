@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   },
 
   // 發布到github page時需改為false，本地測試需改為true
-  ssr: false,
+  ssr: process.env.NODE_ENV !== "production",
 
   // when enabling ssr option you need to disable inlineStyles and maybe devLogs
   features: {
@@ -36,10 +36,7 @@ export default defineNuxtConfig({
   // 運行時配置 (Runtime Config)
   runtimeConfig: {
     public: {
-      // apiBaseUrl: "",
-      apiBaseUrl:
-        process.env.NUXT_PUBLIC_API_BASE_URL ||
-        "https://curridata-server-pg.vercel.app",
+      apiBaseUrl: "",
     },
   },
   vuetify: {
