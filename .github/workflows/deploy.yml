@@ -4,29 +4,44 @@ on:
   push:
     branches:
       - main
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  # 只需要一個 deploy 工作即可
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 上傳本機打包好的 .output/public 目錄
+      # 1. 設定 Node.js 環境
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 2. 自動安裝專案依賴套件
+      - name: Install dependencies
+        run: npm ci
+
+      # 3. 在 Actions 雲端執行打包 (產出最新的 .output/public)
+      - name: Build / Generate Nuxt
+        run: npx nuxi generate
+
+      # 4. 上傳雲端剛產出的 .output/public 目錄
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .output/public
 
-      # 自動發布到 GitHub Pages
+      # 5. 自動發布至 GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
