@@ -5,7 +5,7 @@
   >
     <v-card class="login-card rounded-lg pa-2" width="420" elevation="6">
       <!-- 標題 -->
-      <v-card-title class="text-h5"> 請輸入帳密登入 </v-card-title>
+      <v-card-title class="text-h5"> 請輸入帳密登入2 </v-card-title>
 
       <v-card-subtitle> 本系統雲端伺服器架設於vercel.com </v-card-subtitle>
 
