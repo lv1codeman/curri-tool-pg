@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mx-auto px-4 py-6" style="max-width: 800px">
     <h2>{{ title }}</h2>
 
     <!-- 錯誤提示區域 -->

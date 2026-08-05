@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-6">
+  <v-container class="v-container pa-6">
     <!-- 頁面標題 -->
     <div class="mb-4">
       <h1
@@ -32,7 +32,8 @@
               :key="field.key"
               cols="12"
               sm="6"
-              md="3"
+              md="4"
+              :lg="field.key === 'course_name' ? 4 : 3"
             >
               <!-- 文字輸入框 -->
               <v-text-field
@@ -105,17 +106,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useNuxtApp } from "#app";
 
-// 1. 套用指定 Layout
 definePageMeta({
   layout: "layout1",
 });
 
-// 2. 狀態與 API 設定
 const { $curridataAPI } = useNuxtApp();
 const API_URL = "/api/course_query";
+const CLASSES_API_URL = "/api/get_classes"; // 新增班級清單 API 路線
 
 const loading = ref(false);
 const downloadLoading = ref(false);
@@ -125,15 +125,19 @@ const errorMessage = ref(null);
 const snackbar = ref(false);
 const snackbarText = ref("");
 const snackbarColor = ref("deep-orange-darken-1");
-const currentROCYear = new Date().getFullYear() - 1911; // 115
+const currentROCYear = new Date().getFullYear() - 1911;
 
-// 表單預設查詢參數（對應 FastAPI 預設值）
+// 儲存動態抓取的班級選單資料
+const classList = ref([]);
+const isClassLoading = ref(false); // 班級選單載入中狀態
+
+// 表單預設查詢參數
 const defaultParams = {
   year: "115",
   semester: "1",
-  branch: "",
-  class_id: "",
-  course_id: "",
+  branch: "D",
+  class_id: "", // 修正：班級代碼
+  course_id: "", // 修正：課程代碼
   course_name: "",
   teacher_name: "",
   week: "",
@@ -144,7 +148,17 @@ const defaultParams = {
 const queryParams = reactive({ ...defaultParams });
 
 // 查詢欄位動態配置表
-const queryFields = [
+const queryFields = computed(() => [
+  {
+    key: "branch",
+    label: "部別",
+    type: "select",
+    items: [
+      { title: "全部", value: "" },
+      { title: "日間部 (D)", value: "D" },
+      { title: "夜間部 (N)", value: "N" },
+    ],
+  },
   {
     key: "year",
     label: "學年度",
@@ -163,20 +177,18 @@ const queryFields = [
       { title: "第二學期", value: "2" },
     ],
   },
+
+  // 💡 1. 修改：標題改為「修課班級」，型態改為 select，帶入動態抓到的 classList
   {
-    key: "branch",
-    label: "部別",
+    key: "class_id",
+    label: "修課班級",
     type: "select",
-    items: [
-      { title: "全部", value: "" },
-      { title: "日間部 (D)", value: "D" },
-      { title: "夜間部 (N)", value: "N" },
-    ],
+    items: classList.value,
+    "item-title": "Text", // 👈 指定 Text 為顯示文字
+    "item-value": "Value", // 👈 指定 Value 為選單數值
+    loading: isClassLoading.value,
   },
-  { key: "class_id", label: "班級代碼", type: "text" },
-  { key: "course_name", label: "課程名稱", type: "text" },
-  { key: "teacher_name", label: "教師姓名", type: "text" },
-  { key: "course_id", label: "課程代碼", type: "text" },
+
   {
     key: "week",
     label: "星期",
@@ -212,11 +224,49 @@ const queryFields = [
       { title: "否 (N)", value: "N" },
     ],
   },
-];
+  { key: "teacher_name", label: "教師姓名", type: "text" },
+  { key: "course_id", label: "課程代碼", type: "text" },
+  { key: "course_name", label: "課程名稱", type: "text" },
+]);
 
-// 3. 計算屬性 (Computed)
+// 2. 抓取修課班級清單的函式
+const fetchClasses = async () => {
+  isClassLoading.value = true;
+  try {
+    const response = await $curridataAPI.get(CLASSES_API_URL, {
+      params: {
+        year: queryParams.year,
+        semester: queryParams.semester,
+        branch: queryParams.branch || "D",
+      },
+    });
 
-// 自動清理未填寫的空白參數
+    // 塞入 API 回傳的陣列，過濾掉空的預設選項 (Text 為空的情況)
+    if (Array.isArray(response.data)) {
+      classList.value = response.data.filter((item) => item.Text !== "");
+    } else {
+      classList.value = [];
+    }
+    showToast("修課班級載入成功。", "deep-green-darken-1");
+  } catch (error) {
+    console.error("Fetch Classes Error:", error);
+    classList.value = [];
+    showToast("修課班級載入失敗，請確認網路連線。", "deep-orange-darken-1");
+  } finally {
+    isClassLoading.value = false;
+  }
+};
+
+// 3. 使用 Watch 監聽學年度、學期、部別的變化
+watch(
+  () => [queryParams.year, queryParams.semester, queryParams.branch],
+  async () => {
+    queryParams.class_id = ""; // 當前置條件改變時，先把原本選的班級清空
+    await fetchClasses(); // 重新發送 GET 請求取得新班級列表
+  }
+);
+
+// 計算屬性：自動清理未填寫的空白參數
 const cleanParams = computed(() => {
   const params = {};
   Object.keys(queryParams).forEach((key) => {
@@ -227,8 +277,6 @@ const cleanParams = computed(() => {
   return params;
 });
 
-// 4. 方法 (Methods)
-
 const showToast = (message, color = "deep-orange-darken-1") => {
   snackbarText.value = message;
   snackbarColor.value = color;
@@ -238,7 +286,7 @@ const showToast = (message, color = "deep-orange-darken-1") => {
 // 重置查詢條件
 const resetQuery = () => {
   Object.assign(queryParams, defaultParams);
-  //   handleSearch();
+  fetchClasses(); // 重置時重新抓取預設條件的班級
 };
 
 // 下載 Excel (Blob 串流處理)
@@ -277,8 +325,6 @@ const downloadExcel = async () => {
     showToast("Excel 下載成功！", "success");
   } catch (error) {
     console.error("Download Error:", error);
-
-    // 解析 Blob 錯誤訊息
     if (error.response?.data instanceof Blob) {
       const errorText = await error.response.data.text();
       try {
@@ -295,13 +341,15 @@ const downloadExcel = async () => {
   }
 };
 
-// 頁面掛載時觸發一次查詢
+// 4. 頁面剛載入時，發送第一次請求取得初始班級清單
 onMounted(() => {
-  //   handleSearch();
+  fetchClasses();
 });
 </script>
-
 <style scoped>
+.v-container {
+  max-width: 75%;
+}
 .search-field {
   min-width: 150px;
 }
