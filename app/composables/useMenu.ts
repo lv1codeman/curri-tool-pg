@@ -24,6 +24,13 @@ export const useMenu = () => {
     },
 
     {
+      title: "課程查詢",
+      icon: "mdi-layers-search",
+      path: "/Info/courseQuery",
+      roles: ["admin", "curri", "user", "guest"],
+    },
+
+    {
       title: "資料庫維護",
       icon: "mdi-database",
       group: true,

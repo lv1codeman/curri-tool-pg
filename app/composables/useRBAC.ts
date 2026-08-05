@@ -8,6 +8,7 @@ export const useRBAC = () => {
       "/Converters",
       "/Info",
       "/Tools",
+      "/Info/courseQuery",
     ],
 
     curri: [
@@ -16,6 +17,7 @@ export const useRBAC = () => {
       "/DB/ClassDeptshort",
       "/Converters",
       "/Info",
+      "/Info/courseQuery",
     ],
 
     user: [
@@ -23,9 +25,10 @@ export const useRBAC = () => {
       "/Converters/ClassToOthers",
       "/Converters/SIDtoSYS",
       "/Info",
+      "/Info/courseQuery",
     ],
 
-    guest: ["/welcome", "/Info"],
+    guest: ["/welcome", "/Info", "/courseQuery"],
   };
 
   const canAccess = (role: string, path: string) => {
